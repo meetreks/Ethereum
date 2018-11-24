@@ -1,0 +1,55 @@
+pragma solidity >=0.4.22 <0.6.0;
+contract SimpleCoin{
+    uint256 supply;
+    address owner;
+    address to;
+    uint256 value;
+    uint256 balance;
+    mapping(address => uint256) balances;
+    modifier onlyOwner()
+    {
+        if(msg.sender==owner)
+        {
+            _;
+        }
+    }
+    
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    
+    constructor() public{
+        owner = msg.sender;
+        supply = 300000;
+        balances[owner] = 100000;
+        
+    }
+    
+    function totalSupply() public view returns (uint256)
+    {
+        return supply;
+    }
+    
+    function setSupply(uint256 newsupply) onlyOwner public returns (uint)
+    {
+        supply = newsupply;
+        return supply;
+    }
+    
+    function balanceOf(address owner) public view returns (uint256)
+    {
+        return balances[owner];
+    }
+    
+    function setBalance(uint256 newbalance) onlyOwner public returns (uint256)
+    {
+        balance = newbalance;
+        return balance;
+    }
+    function transfer(address to1, uint256 value1) onlyOwner public returns (bool)
+    {   
+        require(value1 <= balances[msg.sender],"insuff");
+        balances[msg.sender] = balances[msg.sender] - value1;
+        balances[to1] += value1;
+        emit Transfer(msg.sender,to1,value1);
+        return true;
+    }
+}
